@@ -1,0 +1,23 @@
+name: 'Provides CERNs ROOT'
+description: 'Installs and loads ROOT in given version'
+inputs:
+  version:
+    description: 'The ROOT version'
+    required: false
+outputs:
+  rootsys: 
+    description: "ROOTSYS value"
+    value: ${{ steps.provide-rootsys.outputs.rootsys }}
+runs:
+  using: "composite"
+  steps: 
+    - name: Install snap
+      run: sudo apt-get update -q
+        && sudo apt-get install snap -q -y
+      shell: bash
+    - name: Download and load ROOT
+      run: sudo snap install root-framework
+      shell: bash
+    - id: provide-rootsys
+      run: echo "::set-output name=rootsys::$(root-config --prefix)"
+      shell: bash

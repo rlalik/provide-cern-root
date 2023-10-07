@@ -1,0 +1,17 @@
+# This is an example of using Composite Run Steps Actions
+name: provide-cern-root Composite Example
+
+on: [workflow_dispatch]
+
+jobs:
+  copy_files_job:
+    runs-on: ubuntu-latest
+    name: Get CERNs ROOT example
+    steps:
+    - uses: actions/checkout@v2
+    - id: root
+      uses: rlalik/provide-cern-root@v1
+      with:
+        version: 6.28.00
+    - run: echo ROOTSYS=${{ steps.root.outputs.rootsys }}
+      shell: bash
