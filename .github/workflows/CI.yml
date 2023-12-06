@@ -4,14 +4,23 @@ name: provide-cern-root Composite Example
 on: [workflow_dispatch]
 
 jobs:
-  copy_files_job:
-    runs-on: ubuntu-latest
+  test:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, ubuntu-20.04 ]
+        version: [ 6.26.14, 6.28.10, 6.30.02 ]
     name: Get CERNs ROOT example
+    runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
-    - id: root
-      uses: rlalik/provide-cern-root@v1
-      with:
-        version: 6.28.00
-    - run: echo ROOTSYS=${{ steps.root.outputs.rootsys }}
-      shell: bash
+      - uses: actions/checkout@v2
+      - id: root
+        uses: rlalik/provide-cern-root@v2
+        with:
+          version: ${{ matrix.version }}
+          os: ${{ matrix.os }}
+      - run: |
+          export ROOTSYS=${{ steps.root.outputs.rootsys }}
+          echo ROOTSYS=$ROOTSYS
+          . ${ROOTSYS}/bin/thisroot.sh
+          root-config --version
+        shell: bash
